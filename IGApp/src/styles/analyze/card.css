@@ -1,0 +1,106 @@
+
+.card {
+    width: 33.33%;
+}
+
+.card-feature {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.card-item {
+    position: relative;
+    height: 320px;
+    align-items: center;
+    display:flex;
+    justify-content: center;
+    margin-left: 15px;
+    margin-right: 15px;
+    text-align: center;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgba(54, 56, 64, 0.1);
+    background: bottom right no-repeat;
+    background-color: white;
+}
+
+.card-type {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.43;
+    text-align: center;
+    color: #707ea7;
+}
+
+.card-name {
+    margin-top:5px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: black;
+}
+
+.card-content {
+    margin-top:3px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.33;
+    color: #707ea7;
+}
+
+.card-content span {
+    font-size: 12px;
+}
+
+.card-status {
+    width: fit-content;
+    margin-top:40px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.33;
+    color: #2fcf5f;
+}
+
+.card-comparison {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--dark);
+}
+
+.card-comparison span {
+    font-weight: 600;
+}
+
+.card-avatar {
+    margin-top:30px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height:55px;
+}
+
+.card-showme {
+    width: fit-content;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom: 15px;
+    margin-top: 20px;
+    padding:12px 13px;
+    border-radius: 3px;
+    border:none;
+    background-color: #707ea7;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.33;
+    color: white;
+}
+
+.arrow-up {
+    align-self: center;
+    border-width: 5px 4px 0px;
+    transform: rotate(180deg);
+    border-color: #ee2032 transparent transparent transparent;
+}
