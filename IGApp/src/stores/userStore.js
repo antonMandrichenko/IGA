@@ -8,14 +8,7 @@ class UserStore {
         this.userAccount = data;
     }
 
-    setUserMonthPlan(data, rate=0.5) {
-        console.log("setUserPlan", data)
-        if(rate !== 1) {
-            console.log(rate)
-            data.annualBudget = data.annualBudget * rate;
-            data.annualBudgetArray = data.annualBudgetArray.map(budget => budget * rate)
-        }
-        
+    setUserMonthPlan(data) {
         this.userMonthPlan = data;
     }
 }

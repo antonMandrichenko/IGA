@@ -19,6 +19,7 @@ import {getProfileSync} from 'components/utils/AuthService';
 import Settings from 'components/pages/Settings';
 import {getMemberFullName} from 'components/utils/teamMembers';
 import {get} from 'lodash';
+import sum from 'lodash/sum';
 import {compose} from 'components/utils/utils';
 import {inject, observer} from 'mobx-react';
 import Loader from 'components/controls/Loader';
@@ -465,7 +466,25 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  setDataAsState(data) {
+  setDataCurrencies(data, rate=0.6) {
+    data.annualBudget = data.annualBudget * rate;
+    data.annualBudgetArray = data.annualBudgetArray.map(budget => budget * rate);
+    // data.planBudgets = data.planBudgets.map(item => 
+    //  Object.entries(item).forEach(([key, value]) => {
+    //    return {[key]: {committedBudget: value.committedBudget * rate, ...value}}
+    //   })
+    // )
+    return data;
+  } 
+
+  setDataAsState(store, rate) {
+    let data;
+    if(rate !== 1) {
+      data = this.setDataCurrencies(store, rate);
+    } else {
+      data = {...store}
+    }
+    
     userStore.setUserMonthPlan(data);
     this.setState({
       dataUpdated: true,
