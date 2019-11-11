@@ -132,7 +132,8 @@ class AppComponent extends Component {
       this.getRegions(),
       this.getIndicatorsMetadata(),
       this.getChannelsMetadata(),
-      this.getUserMonthPlan(localStorage.getItem('region'), null)
+      this.getUserMonthPlan(localStorage.getItem('region'), null),
+      this.getCurrencies()
     ];
 
     Promise.all(tasks)
@@ -201,6 +202,7 @@ class AppComponent extends Component {
       })
       .then((data) => {
         if (data) {
+          console.log("data2", data)
           this.setDataAsState(data);
           initializeIndicators(this.state.indicatorsSchema, data.userIndicatorsSchema);
           initializeChannels(this.state.channelsSchema, data.userChannelsSchema);
@@ -229,6 +231,7 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (data) {
+                console.log("userData", data)
                 userStore.setUserAccount(data);
                 this.setState({
                   userAccount: data,
@@ -403,6 +406,36 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
+  getCurrencies() {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('GET', 'currencies', false, false, false, true)
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                // this.setState({
+                //   indicatorsSchema: data
+                // });
+                // initializeIndicators(data);
+                deferred.resolve();
+                console.log("currencies", data)
+              }
+            });
+        }
+        else if (response.status == 401) {
+          history.push('/');
+          deferred.reject();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
+  }
+
   getRegions() {
     const deferred = q.defer();
     serverCommunication.serverRequest('GET', 'regions')
@@ -411,6 +444,7 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (data) {
+                console.log("region", data)
                 this.setState({
                   regions: data
                 });
@@ -701,6 +735,7 @@ class AppComponent extends Component {
         if (response.ok) {
           response.json()
             .then(([unmappedUrls, unmappedUtms, unmappedOffline]) => {
+              console.log("unmap", unmappedUrls, unmappedUtms, unmappedOffline)
               this.setState({
                 unmappedUrls,
                 unmappedUtms,
