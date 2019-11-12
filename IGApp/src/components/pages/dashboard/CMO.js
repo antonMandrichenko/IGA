@@ -871,7 +871,7 @@ class CMO extends Component {
           title="Active Campaigns"
           stat={numberOfActiveCampaigns}
           context={{
-            stat: '$' + formatBudgetShortened(monthlyBudgetLeftToInvest),
+            stat: `${this.props.attributionStore.currentCurrency.sign}${formatBudgetShortened(monthlyBudgetLeftToInvest)}`,
             text: 'left to invest',
             type: monthlyBudgetLeftToInvest > 0 ? 'positive' : monthlyBudgetLeftToInvest < 0 ? 'negative' : 'neutral'
           }}
@@ -930,7 +930,7 @@ class CMO extends Component {
             Campaigns by Focus
           </Tooltip>
           <div className={this.classes.chart}>
-            <CampaignsByFocus campaigns={campaigns}/>
+            <CampaignsByFocus campaigns={campaigns} sign={this.props.attributionStore.currentCurrency.sign}/>
           </div>
         </div>
         <div className={this.classes.summaryItem}>
@@ -958,7 +958,7 @@ class CMO extends Component {
                       {element.name}
                     </div>
                     <div className={this.classes.fatherChannelValue}>
-                      ${formatNumber(element.value)}
+                    {this.props.attributionStore.currentCurrency.sign}{formatNumber(element.value)}
                     </div>
                     <div className={this.classes.fatherChannelPercentage}>
                       ({Math.round(element.value / monthlyBudget * 100)}%)
