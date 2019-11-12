@@ -176,7 +176,6 @@ class Header extends Component {
           history.push('/dashboard/CMO');
         }}>
           <div className={this.classes.logo}/>
-          
         </div>
         <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay}
                    trialEnd={this.props.userAccount.trialEnd}/>
@@ -213,11 +212,12 @@ class Header extends Component {
         </div>
         <Select 
           select={{options: Object.entries(this.props.attributionStore.currencies).map(([key, value]) => ({
-            value,
+            value: key,
             label: key
           }))}} 
           selected={this.props.attributionStore.currentCurrency['currency']}
           onChange={(e) => this.changeCurrentCurrency(e.value)}
+          style={{width: "100px"}}
         />
         {hasUser ?
           <div className={this.classes.dropmenuButton}
@@ -347,13 +347,11 @@ class Header extends Component {
         {/*</div>*/}
         {/*</div>*/}
         {/*: null}*/}
-      
         <div className={this.classes.dropmenuButton}
              data-selected={this.state.dropmenuVisibleBig ? true : null}
              role="button"
              onClick={this.toggleDropmenuBig}
         >
-         
           <div className={this.classes.dropmenu}>
             <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
             <div className={this.classes.userDetails}>
@@ -522,14 +520,15 @@ class Header extends Component {
 
   changeCurrentCurrency(data) {
     const {
-      attributionStore: {setCurrentCurrency}
+      attributionStore: {setCurrentCurrency, currencies},
+      changeDataFromCurrency
     } = this.props;
-    // const curr = {
-    //   currency: data[key],
-    //   rate: data.key
-    // }
-    console.log("select", data)
-    // setCurrentCurrency(curr)
+    const curr = {
+      currency: data,
+      rate: currencies[data]
+    }
+    setCurrentCurrency(curr);
+    changeDataFromCurrency();
   }
 
   render() {

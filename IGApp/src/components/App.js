@@ -34,6 +34,8 @@ const enhance = compose(
 );
 let isScheduleTaskRunning = false;
 
+let userMonthPlanInDollars;
+
 class AppComponent extends Component {
 
   style = style;
@@ -167,6 +169,9 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (!dontSetState) {
+                if(!userMonthPlanInDollars) {
+                  userMonthPlanInDollars = {...data}
+                }
                 this.setDataAsState(data);
                 initializeIndicators(this.state.indicatorsSchema, data.userIndicatorsSchema);
                 initializeChannels(this.state.channelsSchema, data.userChannelsSchema);
@@ -204,6 +209,9 @@ class AppComponent extends Component {
       .then((data) => {
         if (data) {
           console.log("data2", data)
+          if(!userMonthPlanInDollars) {
+            userMonthPlanInDollars = {...data}
+          }
           this.setDataAsState(data);
           initializeIndicators(this.state.indicatorsSchema, data.userIndicatorsSchema);
           initializeChannels(this.state.channelsSchema, data.userChannelsSchema);
@@ -415,12 +423,11 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (data) {
-                // this.setState({
-                //   indicatorsSchema: data
-                // });
-                // initializeIndicators(data);
+                const {
+                  attributionStore: {setCurrencies}
+                } = this.props;
+                setCurrencies(data);
                 deferred.resolve();
-                console.log("currencies", data)
               }
             });
         }
@@ -466,25 +473,39 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  setDataCurrencies(data, rate=0.6) {
-    data.annualBudget = data.annualBudget * rate;
-    data.annualBudgetArray = data.annualBudgetArray.map(budget => budget * rate);
-    // data.planBudgets = data.planBudgets.map(item => 
-    //  Object.entries(item).forEach(([key, value]) => {
-    //    return {[key]: {committedBudget: value.committedBudget * rate, ...value}}
-    //   })
-    // )
+  setDataCurrencies(data) {
+    const {
+      attributionStore: {currentCurrency}
+    } = this.props;
+    const moneyIndicators = ["ARPA", "ARR", "CAC", "LTV", "MRR", "newBooking", "newPipeline"];
+    if(currentCurrency.currency !== 'USD') {
+      const rate = currentCurrency.rate;
+      data.annualBudget = data.annualBudget * rate;
+      data.annualBudgetArray = data.annualBudgetArray.map(budget => budget * rate);
+      data.planBudgets = data.planBudgets.map(item => 
+        Object.entries(item).reduce((res, [key, value]) => 
+          Object.assign(res, {[key]: {...value, committedBudget: value.committedBudget * rate}}), {})
+        )
+      data.objectives = data.objectives.map(item => 
+        Object.entries(item).reduce((res, [key, value]) =>  {
+          return key
+            ? moneyIndicators.includes(key) 
+              ? Object.assign(res, {[key]: {...value, target: {...value.target, value: value.target.value * rate}}}) 
+              : Object.assign(res,{[key]:{...value}})
+            : res
+        },{})
+      )
+    }
+    
     return data;
   } 
 
-  setDataAsState(store, rate) {
-    let data;
-    if(rate !== 1) {
-      data = this.setDataCurrencies(store, rate);
-    } else {
-      data = {...store}
-    }
-    
+  changeDataFromCurrency = () => {
+    this.setDataAsState({...userMonthPlanInDollars});
+  }
+
+  setDataAsState(store) {
+    const data = this.setDataCurrencies(store);
     userStore.setUserMonthPlan(data);
     this.setState({
       dataUpdated: true,
@@ -890,7 +911,7 @@ class AppComponent extends Component {
 
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header {...extendedData} tabs={tabs} isSettingsOpen={this.isSettingsOpen()} userAccount={this.state.userAccount} path={this.props.location.pathname}/>
+        <Header {...extendedData} tabs={tabs} isSettingsOpen={this.isSettingsOpen()} userAccount={this.state.userAccount} path={this.props.location.pathname} changeDataFromCurrency={this.changeDataFromCurrency}/>
         <UnsavedPopup hidden={!this.state.showUnsavedPopup} callback={this.state.callback}/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={() => {
           this.setState({isPlannerLoading: false});
