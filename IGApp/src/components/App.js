@@ -487,21 +487,34 @@ class AppComponent extends Component {
           Object.assign(res, {[key]: {...value, committedBudget: value.committedBudget * rate}}), {})
         )
       data.objectives = data.objectives.map(item => 
-        Object.entries(item).reduce((res, [key, value]) =>  {
-          return key
+        Object.entries(item).reduce((res, [key, value]) =>  
+          key
             ? moneyIndicators.includes(key) 
               ? Object.assign(res, {[key]: {...value, target: {...value.target, value: value.target.value * rate}}}) 
               : Object.assign(res,{[key]:{...value}})
             : res
-        },{})
+        ,{})
       )
+      data.actualIndicators = Object.entries(data.actualIndicators).reduce((res, [key, value]) =>  
+        moneyIndicators.includes(key) 
+            ? Object.assign(res, {[key]: value * rate}) 
+            : Object.assign(res,{[key]: value})
+      ,{})
+
+      data.campaigns = data.campaigns.map(item =>  
+        item.budget && item.budget !== null 
+          ? {...item, budget: item.budget * rate}
+          : item
+        )
     }
     
     return data;
   } 
 
   changeDataFromCurrency = () => {
+    const {attributionStore} = this.props;
     this.setDataAsState({...userMonthPlanInDollars});
+    attributionStore.setAttributionData(userStore.userMonthPlan, {monthsExceptThisMonth: 0}, "default")
   }
 
   setDataAsState(store) {
