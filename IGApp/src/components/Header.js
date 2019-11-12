@@ -13,14 +13,24 @@ import {getNumberOfDaysBetweenDates} from 'components/utils/date';
 import insightsStyle from 'styles/insights/insights.css';
 import menuStyle from 'styles/sidebar.css';
 import {Link} from 'react-router';
+import {inject, observer} from 'mobx-react';
 import {getProfileSync, logout} from 'components/utils/AuthService';
 import PayButton from 'components/PayButton';
 import {getMemberFullName} from 'components/utils/teamMembers';
 import {userPermittedToPage} from 'utils';
 import Settings from './pages/header/Settings';
 import Tooltip from 'components/controls/Tooltip';
+import Select from 'components/controls/Select';
+import {compose, mapObjToSelectOptions} from 'components/utils/utils';
 
-export default class Header extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class Header extends Component {
 
   style = style;
   styles = [insightsStyle];
@@ -166,6 +176,7 @@ export default class Header extends Component {
           history.push('/dashboard/CMO');
         }}>
           <div className={this.classes.logo}/>
+          
         </div>
         <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay}
                    trialEnd={this.props.userAccount.trialEnd}/>
@@ -200,6 +211,14 @@ export default class Header extends Component {
         <div className={this.classes.hiddenEmail}>
           {user && user.email}
         </div>
+        <Select 
+          select={{options: Object.entries(this.props.attributionStore.currencies).map(([key, value]) => ({
+            value,
+            label: key
+          }))}} 
+          selected={this.props.attributionStore.currentCurrency['currency']}
+          onChange={(e) => this.changeCurrentCurrency(e.value)}
+        />
         {hasUser ?
           <div className={this.classes.dropmenuButton}
                data-selected={this.state.notificationsVisible ? true : null}
@@ -328,11 +347,13 @@ export default class Header extends Component {
         {/*</div>*/}
         {/*</div>*/}
         {/*: null}*/}
+      
         <div className={this.classes.dropmenuButton}
              data-selected={this.state.dropmenuVisibleBig ? true : null}
              role="button"
              onClick={this.toggleDropmenuBig}
         >
+         
           <div className={this.classes.dropmenu}>
             <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
             <div className={this.classes.userDetails}>
@@ -499,6 +520,18 @@ export default class Header extends Component {
     this.props.getUserMonthPlan(region);
   }
 
+  changeCurrentCurrency(data) {
+    const {
+      attributionStore: {setCurrentCurrency}
+    } = this.props;
+    // const curr = {
+    //   currency: data[key],
+    //   rate: data.key
+    // }
+    console.log("select", data)
+    // setCurrentCurrency(curr)
+  }
+
   render() {
     let popup = null;
     if (this.state.suggestionPopup) {
@@ -584,3 +617,5 @@ export class MenuItem extends Component {
       null;
   }
 }
+
+export default enhance(Header);
