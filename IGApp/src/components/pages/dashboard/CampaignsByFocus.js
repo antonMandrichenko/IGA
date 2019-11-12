@@ -8,7 +8,7 @@ export default class CampaignsByFocus extends Component {
   style = style;
 
   render() {
-    const {campaigns} = this.props;
+    const {campaigns, sign} = this.props;
     let focuses = {
       Acquisition: 0,
       Activation: 0,
@@ -36,7 +36,7 @@ export default class CampaignsByFocus extends Component {
           {focus}
         </div>
         <div className={this.classes.focusBudget}>
-          ${formatBudgetShortened(focuses[focus])}
+          {sign}{formatBudgetShortened(focuses[focus])}
         </div>
         <div className={this.classes.focusPercentage}>
           {totalBudget ? Math.round(focuses[focus]/totalBudget*100) : 0}%
@@ -54,7 +54,7 @@ export default class CampaignsByFocus extends Component {
           </div>
         </div>
         <div className={this.classes.campaignsBudget}>
-          ${formatBudgetShortened(totalBudget)}
+          {sign}{formatBudgetShortened(totalBudget)}
         </div>
         <div className={this.classes.right}>
           <div className={this.classes.supporting}>
