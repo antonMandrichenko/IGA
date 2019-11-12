@@ -26,6 +26,11 @@ class AttributionStore {
   timeFrame = {
     monthsExceptThisMonth: 0
   };
+  currencies = [];
+  currentCurrency = {
+    currency: 'USD',
+    rate: 1
+  }
 
   getStartAndEndTS(timeFrame) {
     const {startDate, endDate, monthsExceptThisMonth} = timeFrame;
@@ -165,6 +170,14 @@ class AttributionStore {
     this.zeroWeightsNotInTimeFrame = zeroWeightsNotInTimeFrame;
   }
 
+  setCurrencies (data) {
+    this.currencies = {...data.rates};
+  };
+
+  setCurrentCurrency (obj) {
+    this.currentCurrency = {...obj};
+  };
+
   setMetricOptions() {
     const metrics = {
       MCL: getNickname('MCL'),
@@ -247,12 +260,16 @@ decorate(AttributionStore, {
   data: observable.ref,
   isLoaded: observable,
   isLoading: observable,
+  currencies: observable,
+  currentCurrency: observable,
   timeFrame: observable,
   zeroWeightsNotInTimeFrame: observable,
   attributionModel: observable,
   conversionIndicator: observable.ref,
   metricsOptions: observable.ref,
   tsRange: computed,
+  setCurrencies: action.bound,
+  setCurrentCurrency: action.bound,
   cleanAttributionData: action.bound,
   pullAttributionData: action.bound,
   setAttributionData: action.bound,
