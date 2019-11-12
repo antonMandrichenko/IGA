@@ -27,6 +27,8 @@ import PlanPopup, {TextContent as PopupTextContent} from 'components/pages/plan/
 import Select from 'components/controls/Select';
 import {monthNames} from 'components/utils/date';
 import {newIndicatorMapping} from 'components/utils/indicators';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
 const timeFrameType = {
   month: 'This Month',
@@ -34,7 +36,14 @@ const timeFrameType = {
   year: 'This Year'
 };
 
-export default class CMO extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class CMO extends Component {
 
   style = style;
 
@@ -457,7 +466,7 @@ export default class CMO extends Component {
             <div className={classnames(this.classes.columnBody, this.classes.grid)}>
               <div className={this.classes.quarter}>
                 <div className={this.classes.quarterNumber}>
-                  ${formatBudgetShortened(pastSpend)}
+                {this.props.attributionStore.currentCurrency.sign}{formatBudgetShortened(pastSpend)}
                   <div className={this.classes.center} style={{
                     visibility: (relativePastBudget &&
                       isFinite(relativePastBudget) &&
@@ -503,7 +512,7 @@ export default class CMO extends Component {
               </div>
               <div className={this.classes.quarter}>
                 <div className={this.classes.quarterNumber}>
-                  ${formatBudgetShortened(pastPipeline)}
+                {this.props.attributionStore.currentCurrency.sign}{formatBudgetShortened(pastPipeline)}
                   <div className={this.classes.center} style={{
                     visibility: (relativePastPipeline &&
                       isFinite(relativePastPipeline) &&
@@ -592,7 +601,7 @@ export default class CMO extends Component {
                 </div>
                 <div className={this.classes.snapshot}>
                   <div className={this.classes.snapshotNumber}>
-                    ${formatBudgetShortened(currentTimeFrame.budget)}
+                  {this.props.attributionStore.currentCurrency.sign}{formatBudgetShortened(currentTimeFrame.budget)}
                   </div>
                   <div className={this.classes.snapshotText}>
                     Budget
@@ -600,7 +609,7 @@ export default class CMO extends Component {
                 </div>
                 <div className={this.classes.snapshot}>
                   <div className={this.classes.snapshotNumber}>
-                    ${formatBudgetShortened(actualIndicators.MRR)}
+                  {this.props.attributionStore.currentCurrency.sign}{formatBudgetShortened(actualIndicators.MRR)}
                   </div>
                   <div className={this.classes.snapshotText}>
                     MRR
@@ -647,7 +656,7 @@ export default class CMO extends Component {
             <div className={classnames(this.classes.columnBody, this.classes.grid)}>
               <div className={this.classes.quarter}>
                 <div className={this.classes.quarterNumber}>
-                  ${formatBudgetShortened(futureBudget)}
+                {this.props.attributionStore.currentCurrency.sign}{formatBudgetShortened(futureBudget)}
                   <div className={this.classes.center} style={{
                     visibility: (pastSpend && isFinite(pastSpend) && (futureBudget / pastSpend - 1))
                       ? 'visible'
@@ -692,7 +701,7 @@ export default class CMO extends Component {
               </div>
               <div className={this.classes.quarter}>
                 <div className={this.classes.quarterNumber}>
-                  ${formatBudgetShortened(futurePipeline)}
+                {this.props.attributionStore.currentCurrency.sign}{formatBudgetShortened(futurePipeline)}
                   <div className={this.classes.center} style={{
                     visibility: (pastPipeline && isFinite(pastPipeline) && (futurePipeline / pastPipeline - 1))
                       ? 'visible'
@@ -839,9 +848,9 @@ export default class CMO extends Component {
       <div className={classnames(this.classes.rows, this.classes.stats)}>
         <StatSquare
           title="Annual Budget"
-          stat={'$' + formatBudgetShortened(annualBudget)}
+          stat={`${this.props.attributionStore.currentCurrency.sign}${formatBudgetShortened(annualBudget)}`}
           context={{
-            stat: '$' + formatBudgetShortened(annualBudgetLeftToPlan),
+            stat: `${this.props.attributionStore.currentCurrency.sign}${formatBudgetShortened(annualBudgetLeftToPlan)}`,
             text: 'left to plan',
             type: annualBudgetLeftToPlan > 0 ? 'positive' : annualBudgetLeftToPlan < 0 ? 'negative' : 'neutral'
           }}
@@ -849,12 +858,12 @@ export default class CMO extends Component {
         />
         <StatSquare
           title="Monthly Budget"
-          stat={'$' + formatBudgetShortened(monthlyBudget)}
+          stat={`${this.props.attributionStore.currentCurrency.sign}${formatBudgetShortened(monthlyBudget)}`}
           note={{
             text: isOnTrack ? 'On-Track' : 'Off-Track',
             tooltipText: isOnTrack ?
               'Actual spent on-track' :
-              'Actual spent off-track. Forecasted: ' + '$' + formatBudgetShortened(monthlyExtapolatedTotalSpending)
+              'Actual spent off-track. Forecasted: ' + `${this.props.attributionStore.currentCurrency.sign}${formatBudgetShortened(monthlyExtapolatedTotalSpending)}`
           }}
           containerClassName={this.classes.statSquareContainer}
         />
@@ -1097,3 +1106,5 @@ export default class CMO extends Component {
     );
   }
 }
+
+export default enhance(CMO);
