@@ -22,6 +22,7 @@ import Settings from './pages/header/Settings';
 import Tooltip from 'components/controls/Tooltip';
 import Select from 'components/controls/Select';
 import {compose, mapObjToSelectOptions} from 'components/utils/utils';
+import {signs} from "components/utils/signs"
 
 const enhance = compose(
   inject(({attributionStore}) => ({
@@ -210,15 +211,17 @@ class Header extends Component {
         <div className={this.classes.hiddenEmail}>
           {user && user.email}
         </div>
-        <Select 
-          select={{options: Object.entries(this.props.attributionStore.currencies).map(([key, value]) => ({
-            value: key,
-            label: key
-          }))}} 
-          selected={this.props.attributionStore.currentCurrency['currency']}
-          onChange={(e) => this.changeCurrentCurrency(e.value)}
-          style={{width: "100px"}}
-        />
+        <div className={this.classes.dropmenuButton}>
+          <Select 
+            select={{options: Object.entries(this.props.attributionStore.currencies).map(([key, value]) => ({
+              value: key,
+              label: key
+            }))}} 
+            selected={this.props.attributionStore.currentCurrency['currency']}
+            onChange={(e) => this.changeCurrentCurrency(e.value)}
+            style={{width: "100px"}}
+          />
+        </div>
         {hasUser ?
           <div className={this.classes.dropmenuButton}
                data-selected={this.state.notificationsVisible ? true : null}
@@ -525,7 +528,8 @@ class Header extends Component {
     } = this.props;
     const curr = {
       currency: data,
-      rate: currencies[data]
+      rate: currencies[data],
+      sign: signs[data] ? signs[data] : data
     }
     setCurrentCurrency(curr);
     changeDataFromCurrency();
