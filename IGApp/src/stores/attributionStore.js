@@ -29,7 +29,8 @@ class AttributionStore {
   currencies = [];
   currentCurrency = {
     currency: 'USD',
-    rate: 1
+    rate: 1,
+    sign: "$"
   }
 
   getStartAndEndTS(timeFrame) {
