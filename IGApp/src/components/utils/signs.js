@@ -4,5 +4,6 @@ export const  signs = {
     ILS:"₪",
     UAH: "₴",
     GBP: "£",
-    CAD: "CA$"
+    CAD: "CA$",
+    BTC: "฿"
 }
