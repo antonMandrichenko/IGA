@@ -19,6 +19,9 @@ const enhance = compose(
     inject(({ attributionStore: { data } }) => ({
         data,
     })),
+    inject(({attributionStore}) => ({
+        attributionStore
+      })),
     observer,
 );
 
@@ -41,9 +44,13 @@ class TypedOverviewTable extends React.Component {
                     ),
                     attributedRevenue: formatBudget(
                         revenueByCategory[category],
+                        false,
+                        this.props.attributionStore.currentCurrency.sign
                     ),
                     touchedRevenue: formatBudget(
                         influencedRevenueByCategory[category],
+                        false,
+                        this.props.attributionStore.currentCurrency.sign
                     ),
                 }));
             },
@@ -61,9 +68,15 @@ class TypedOverviewTable extends React.Component {
                             <EllipsisTooltip text={getNickname(channel)} />
                         </div>
                     ),
-                    attributedRevenue: formatBudget(revenueByChannel[channel]),
+                    attributedRevenue: formatBudget(
+                        revenueByChannel[channel], 
+                        false,
+                        this.props.attributionStore.currentCurrency.sign
+                        ),
                     touchedRevenue: formatBudget(
                         influencedRevenueByChannel[channel],
+                        false,
+                        this.props.attributionStore.currentCurrency.sign
                     ),
                 }));
             },
@@ -78,9 +91,15 @@ class TypedOverviewTable extends React.Component {
                     )
                     .map(campaign => ({
                         title: <EllipsisTooltip text={campaign.name} />,
-                        attributedRevenue: formatBudget(campaign.revenue),
+                        attributedRevenue: formatBudget(
+                            campaign.revenue, 
+                            false,
+                            this.props.attributionStore.currentCurrency.sign
+                            ),
                         touchedRevenue: formatBudget(
                             campaign.influencedRevenue,
+                            false,
+                            this.props.attributionStore.currentCurrency.sign
                         ),
                     }));
             },
@@ -90,8 +109,16 @@ class TypedOverviewTable extends React.Component {
             generateData: pages => {
                 return pages.map(page => ({
                     title: <EllipsisTooltip text={page.title} />,
-                    attributedRevenue: formatBudget(page.revenue),
-                    touchedRevenue: formatBudget(page.influencedRevenue),
+                    attributedRevenue: formatBudget(
+                        page.revenue, 
+                        false,
+                        this.props.attributionStore.currentCurrency.sign
+                        ),
+                    touchedRevenue: formatBudget(
+                        page.influencedRevenue, 
+                        false,
+                        this.props.attributionStore.currentCurrency.sign
+                        ),
                 }));
             },
         },

@@ -10,6 +10,15 @@ import {getNickname} from 'components/utils/indicators';
 import {precisionFormat} from 'utils';
 import {averageFormatter, influencedMapping} from 'components/utils/utils';
 import Tooltip from 'components/controls/Tooltip';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 const getNicknameForIndicator = (indicator, isSingular) => {
   if (indicator === 'webVisits') {
@@ -37,7 +46,7 @@ const costDependentColumnTypes = [
 
 const withZeroDefault = (getter) => (arg, ...other) => getter(arg, ...other) || 0;
 
-export default class AttributionTable extends Component {
+class AttributionTable extends Component {
 
   style = style;
 
@@ -129,7 +138,8 @@ export default class AttributionTable extends Component {
       dataNickname,
       getItemCost,
       getItemTitle,
-      columnsBefore
+      columnsBefore,
+      attributionStore
     } = this.props;
     const {selectedStageKey} = this.state;
 
@@ -169,7 +179,7 @@ export default class AttributionTable extends Component {
         header: 'Cost',
         accessor: getItemCost,
         cell: withZeroDefault(formatBudget),
-        footer: data => formatBudget(sumBy(data, withZeroDefault(getItemCost))),
+        footer: data => formatBudget(sumBy(data, withZeroDefault(getItemCost)), false, attributionStore.currentCurrency.sign),
         sortable: true
       },
       {
@@ -199,7 +209,7 @@ export default class AttributionTable extends Component {
         header: this.getHeaderWithTooltip('revenue', 'Attributed Revenue'),
         accessor: 'revenue',
         cell: withZeroDefault(formatBudget),
-        footer: formatBudget(totalRevenue),
+        footer: formatBudget(totalRevenue, false, attributionStore.currentCurrency.sign),
         sortable: true
       },
       {
@@ -223,7 +233,7 @@ export default class AttributionTable extends Component {
         header: this.getHeaderWithTooltip('pipeline', 'Pipeline'),
         accessor: 'pipeline',
         cell: withZeroDefault(formatBudget),
-        footer: formatBudget(totalPipeline),
+        footer: formatBudget(totalPipeline, false, attributionStore.currentCurrency.sign),
         sortable: true
       },
       {
@@ -239,7 +249,7 @@ export default class AttributionTable extends Component {
         header: 'LTV',
         accessor: 'LTV',
         cell: withZeroDefault(formatBudget),
-        footer: formatBudget(totalLTV),
+        footer: formatBudget(totalLTV, false, attributionStore.currentCurrency.sign),
         sortable: true
       },
       {
@@ -247,7 +257,7 @@ export default class AttributionTable extends Component {
         header: this.getHeaderWithTooltip('influenced-revenue', 'Touched Revenue'),
         accessor: 'influencedRevenue',
         cell: withZeroDefault(formatBudget),
-        footer: formatBudget(totalInfluencedRevenue),
+        footer: formatBudget(totalInfluencedRevenue, false, attributionStore.currentCurrency.sign),
         sortable: true
       },
       {
@@ -438,3 +448,5 @@ export default class AttributionTable extends Component {
     );
   }
 }
+
+export default enhance(AttributionTable);
