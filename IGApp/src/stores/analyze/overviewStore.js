@@ -75,7 +75,7 @@ class OverviewStore {
           item => item[newIndicator] || 0
         );
         costPerFunnel[indicator] = indicatorSum
-          ? formatBudget(Math.round(totalCost / indicatorSum))
+          ? formatBudget(Math.round(totalCost / indicatorSum), false, attributionStore.currentCurrency.sign)
           : '-';
       });
 

@@ -14,8 +14,17 @@ import isEmpty from 'lodash/isEmpty';
 import PlanButton from 'components/pages/indicators/PlanButton';
 import history from 'history';
 import ChannelsSelect from 'components/common/ChannelsSelect';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class ManualPlan extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class ManualPlan extends Component {
 
   style = style;
 
@@ -147,7 +156,7 @@ export default class ManualPlan extends Component {
                                     onChange={(e) => this.addOrOverrideManualChannel(index, e.value)}
                     />
                     <Textfield disabled={!manualChannelsKeys[index]}
-                               value={formatBudget(manualChannels[manualChannelsKeys[index]])}
+                               value={formatBudget(manualChannels[manualChannelsKeys[index]], false, this.props.attributionStore.currentCurrency.sign)}
                                placeHolder='Monthly Budget'
                                onChange={(e) => this.handleChangeBudget(manualChannelsKeys[index], e.target.value)}
                                style={{width: '132px', marginLeft: '20px'}}/>
@@ -168,3 +177,5 @@ export default class ManualPlan extends Component {
   }
 
 }
+
+export default enhance(ManualPlan);

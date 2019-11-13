@@ -2,7 +2,7 @@ import {formatBudget} from 'components/utils/budget';
 import {formatTimestamp} from 'components/utils/date';
 import isEmpty from 'lodash/isEmpty';
 
-export function formatExpenses(expenses, dates) {
+export function formatExpenses(expenses, dates, sign) {
   return isEmpty(expenses) ? [] :
     expenses.map(expense => {
 
@@ -15,7 +15,7 @@ export function formatExpenses(expenses, dates) {
       return {
         ...expense,
         formattedTimeframe: timeframeWithIndex.map(item => dates[item.index]).join(', '),
-        formattedAmount: formatBudget(expense.amount),
+        formattedAmount: formatBudget(expense.amount, false, sign),
         formattedTimestamp: formatTimestamp(expense.lastUpdateTime)
       };
     });

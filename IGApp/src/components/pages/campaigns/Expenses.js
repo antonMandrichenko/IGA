@@ -6,8 +6,17 @@ import taskStyle from 'styles/campaigns/task.css';
 import {formatExpenses} from 'components/utils/expenses';
 import Table from 'components/controls/Table';
 import history from 'history';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class Expenses extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class Expenses extends Component {
 
   styles = [taskStyle];
 
@@ -31,8 +40,8 @@ export default class Expenses extends Component {
   };
 
   render() {
-    const {expenses, planDate, calculatedData: {activeCampaigns}} = this.props;
-    const data = formatExpenses(expenses, getDates(planDate))
+    const {expenses, planDate, calculatedData: {activeCampaigns}, attributionStore} = this.props;
+    const data = formatExpenses(expenses, getDates(planDate), attributionStore.currentCurrency.sign)
 
     return (
       <Table
@@ -99,3 +108,6 @@ export default class Expenses extends Component {
     );
   }
 }
+
+
+export default enhance(Expenses);

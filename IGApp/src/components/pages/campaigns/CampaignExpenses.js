@@ -5,18 +5,27 @@ import Button from 'components/controls/Button';
 import history from 'history';
 import {formatExpenses} from 'components/utils/expenses';
 import { SmallTable } from 'components/controls/Table';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class CampaignExpenses extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class CampaignExpenses extends Component {
 
   render() {
-    const {planDate, expenses} = this.props;
+    const {planDate, expenses, attributionStore} = this.props;
 
     const campaignExpenses = expenses.filter(item =>
       item.assignedTo
       && item.assignedTo.entityType === 'campaign'
       && item.assignedTo.entityId === this.props.campaign.index
     );
-    const data = campaignExpenses && formatExpenses(campaignExpenses, getDates(planDate));
+    const data = campaignExpenses && formatExpenses(campaignExpenses, getDates(planDate), attributionStore.currentCurrency.sign);
 
     return <div>
       <SmallTable
@@ -69,3 +78,5 @@ export default class CampaignExpenses extends Component {
     </div>;
   }
 }
+
+export default enhance(CampaignExpenses);

@@ -17,10 +17,19 @@ import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import {precisionFormat} from 'utils';
 import {projectObjective} from 'components/utils/objective';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 const MAX_CHANNELS_FOR_PERIOD = 5;
 
-export default class Navigate extends Component {
+class Navigate extends Component {
 
   style = style;
 
@@ -68,7 +77,7 @@ export default class Navigate extends Component {
             Cost
           </div>
           <div className={this.classes.channelTooltipValue}>
-            {formatBudget(channelCost)}
+            {formatBudget(channelCost, false, this.props.attributionStore.currentCurrency.sign)}
           </div>
         </div>
         <div className={this.classes.channelTooltipRow}>
@@ -110,7 +119,7 @@ export default class Navigate extends Component {
             Budget
           </div>
           <div className={this.classes.channelTooltipValue}>
-            {formatBudget(budget)}
+            {formatBudget(budget, false, this.props.attributionStore.currentCurrency.sign)}
           </div>
         </div>
       </div>
@@ -281,3 +290,5 @@ export default class Navigate extends Component {
     );
   }
 }
+
+export default enhance(Navigate);

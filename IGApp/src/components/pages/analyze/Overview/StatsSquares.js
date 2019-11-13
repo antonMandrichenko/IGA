@@ -17,7 +17,7 @@ import styles from 'styles/analyze/analyze.css';
 const classes = styles.locals;
 
 const enhance = compose(
-    inject(({ attributionStore: { data }, analyze: { overviewStore } }) => {
+    inject(({ attributionStore, analyze: { overviewStore } }) => {
         const {
             stats: { totalCost, totalPipeline, totalRevenue, costPerFunnel },
         } = overviewStore;
@@ -27,6 +27,7 @@ const enhance = compose(
             totalPipeline,
             totalRevenue,
             costPerFunnel,
+            attributionStore
         };
     }),
     observer,
@@ -34,17 +35,17 @@ const enhance = compose(
 
 class StatsSquares extends Component {
     getStatSquareData() {
-        const { totalCost, totalPipeline, totalRevenue } = this.props;
+        const { totalCost, totalPipeline, totalRevenue, attributionStore } = this.props;
 
         return [
             {
                 title: 'Total Cost',
-                stat: `$${formatBudgetShortened(totalCost)}`,
+                stat: `${attributionStore.currentCurrency.sign}${formatBudgetShortened(totalCost)}`,
                 iconUrl: '/assets/analyze-icons/stat-total-cost.svg',
             },
             {
                 title: 'Total Pipeline Revenue',
-                stat: `$${formatBudgetShortened(totalPipeline)}`,
+                stat: `${attributionStore.currentCurrency.sign}${formatBudgetShortened(totalPipeline)}`,
                 iconUrl: '/assets/analyze-icons/stat-total-pipeline.svg',
             },
             {
@@ -56,7 +57,7 @@ class StatsSquares extends Component {
             },
             {
                 title: 'Total Revenue',
-                stat: `$${formatBudgetShortened(totalRevenue)}`,
+                stat: `${attributionStore.currentCurrency.sign}${formatBudgetShortened(totalRevenue)}`,
                 iconUrl: '/assets/analyze-icons/stat-total-revenue.svg',
             },
             {

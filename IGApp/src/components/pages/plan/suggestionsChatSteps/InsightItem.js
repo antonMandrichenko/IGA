@@ -10,6 +10,15 @@ import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getDates} from 'components/utils/date';
 import {formatNumber} from 'components/utils/budget';
 import Tooltip from 'components/controls/Tooltip';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 export default class InsightItem extends Component {
 
@@ -118,12 +127,12 @@ export default class InsightItem extends Component {
   }
 }
 
-export class ChannelItem extends Component {
+enhance(class ChannelItem extends Component {
 
   style = style;
 
   render() {
-    const {fromBudget, toBudget, channel, month} = this.props;
+    const {fromBudget, toBudget, channel, month, attributionStore} = this.props;
     return <div style={{display: 'inline-flex'}}>
       <div className={this.classes.channelItem}>
         <div className={this.classes.date}>
@@ -136,14 +145,14 @@ export class ChannelItem extends Component {
           />
         <div className={this.classes.budgets}>
           <div className={this.classes.fromBudget}>
-            {formatBudget(fromBudget)}
+            {formatBudget(fromBudget, false, attributionStore.currentCurrency.sign)}
           </div>
           <div className={this.classes.shiftIcon}/>
           <div className={this.classes.toBudget}>
-            {formatBudget(toBudget)}
+            {formatBudget(toBudget, false, attributionStore.currentCurrency.sign)}
           </div>
         </div>
       </div>
     </div>;
   }
-};
+});

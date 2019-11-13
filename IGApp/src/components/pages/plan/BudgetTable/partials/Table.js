@@ -14,8 +14,17 @@ import Button from 'components/controls/Button';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import Popup from 'components/Popup';
 import TableCell from 'components/pages/plan/TableCell-2';
-import { classes } from 'components/pages/plan/BudgetTable';
+// import { classes } from 'components/pages/plan/BudgetTable';
 import { formatBudget } from 'components/utils/budget';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 const ReactTableFixedColumns = withFixedColumns(ReactTable);
 
@@ -136,7 +145,10 @@ class Table extends React.PureComponent {
 
             return row;
         });
-
+        // console.log("getData",orderBy(notSorted, [
+        //     row => row.category.toLowerCase(),
+        //     'nickname',
+        // ]))
         return orderBy(notSorted, [
             row => row.category.toLowerCase(),
             'nickname',
@@ -152,6 +164,7 @@ class Table extends React.PureComponent {
             isEditMode,
             isConstraintsEnabled,
             deleteChannel,
+            attributionStore
         } = this.props;
         const { deletePopup } = this.state;
 
@@ -169,7 +182,7 @@ class Table extends React.PureComponent {
                             sum: sumBy(values, 'primaryBudget'),
                         };
                     },
-                    Aggregated: row => formatBudget(row.value.sum),
+                    Aggregated: row => formatBudget(row.value.sum, false, attributionStore.currentCurrency.sign),
                     Cell: ({ value = {} }) => {
                         const {
                             channel,
@@ -182,7 +195,7 @@ class Table extends React.PureComponent {
                         } = value;
 
                         if (isAnnual || isQuarter || isHistory) {
-                            return formatBudget(primaryBudget);
+                            return formatBudget(primaryBudget, false, attributionStore.currentCurrency.sign);
                         }
 
                         return (
@@ -199,38 +212,39 @@ class Table extends React.PureComponent {
                                 updateIndex={updateIndex}
                                 channel={channel}
                                 region={region}
+                                sign={this.props.attributionStore.currentCurrency.sign}
                             />
                         );
                     },
                     width: 140,
                     Footer: row =>
                         formatBudget(
-                            sumBy(row.data, v => v[row.column.id].sum),
+                            sumBy(row.data, v => v[row.column.id].sum),false, attributionStore.currentCurrency.sign
                         ),
                     getProps: (_, row = {}) => {
                         const { aggregated } = row;
 
                         return {
-                            className: classNames({
-                                [classes.cellCategory]: aggregated,
-                                [classes.cellAnnual]: isAnnual,
-                                [classes.cellQuarter]: isQuarter,
-                                [classes.cellHistory]: isHistory,
-                                [classes.cellNotEditable]:
-                                    isAnnual || isQuarter || isHistory,
-                            }),
+                            // className: classNames({
+                            //     [classes.cellCategory]: aggregated,
+                            //     [classes.cellAnnual]: isAnnual,
+                            //     [classes.cellQuarter]: isQuarter,
+                            //     [classes.cellHistory]: isHistory,
+                            //     [classes.cellNotEditable]:
+                            //         isAnnual || isQuarter || isHistory,
+                            // }),
                         };
                     },
                     getHeaderProps: () => ({
-                        className: classNames(
-                            {
-                                [classes.cellAnnual]: isAnnual,
-                                [classes.cellQuarter]: isQuarter,
-                                [classes.cellHistory]: isHistory,
-                                [classes.cellActive]: isCurrentMonth,
-                            },
-                            classes.cellHeader,
-                        ),
+                        // className: classNames(
+                        //     {
+                        //         [classes.cellAnnual]: isAnnual,
+                        //         [classes.cellQuarter]: isQuarter,
+                        //         [classes.cellHistory]: isHistory,
+                        //         [classes.cellActive]: isCurrentMonth,
+                        //     },
+                        //     classes.cellHeader,
+                        // ),
                     }),
                     isAnnual,
                     ...restData,
@@ -246,20 +260,20 @@ class Table extends React.PureComponent {
                 return (
                     <React.Fragment>
                         <button
-                            className={classNames(
-                                classes.buttonUp,
-                                classes.buttonUpAction,
-                            )}
+                            // className={classNames(
+                            //     classes.buttonUp,
+                            //     classes.buttonUpAction,
+                            // )}
                             onClick={this.collapseTable}
                         >
                             <i
-                                className={classNames(
-                                    classes.icon,
-                                    classes.iconUp,
-                                    {
-                                        [classes.iconDown]: !isCollapsed,
-                                    },
-                                )}
+                                // className={classNames(
+                                //     classes.icon,
+                                //     classes.iconUp,
+                                //     {
+                                //         [classes.iconDown]: !isCollapsed,
+                                //     },
+                                // )}
                                 data-icon="plan:monthNavigationWhite"
                             />
                         </button>
@@ -278,14 +292,14 @@ class Table extends React.PureComponent {
 
                     return (
                         <div
-                            className={classes.channel}
+                            // className={classes.channel}
                             data-channel={original.channel}
                         >
                             <i
-                                className={classNames(
-                                    classes.icon,
-                                    classes.iconLarge,
-                                )}
+                                // className={classNames(
+                                //     classes.icon,
+                                //     classes.iconLarge,
+                                // )}
                                 data-icon={getChannelIcon(original.channel)}
                             />
                             <div>{cellData.original.nickname}</div>
@@ -297,10 +311,10 @@ class Table extends React.PureComponent {
                                                 deletePopup: original.channel,
                                             })
                                         }
-                                        className={classes.buttonIcon}
+                                        // className={classes.buttonIcon}
                                     >
                                         <i
-                                            className={classes.icon}
+                                            // className={classes.icon}
                                             data-icon={'plan:removeChannel'}
                                         />
                                     </button>
@@ -331,26 +345,26 @@ class Table extends React.PureComponent {
                 }
             },
             Pivot: ({ isExpanded, value, row }) => (
-                <div className={classes.cellCategory}>
-                    <button className={classes.buttonUp}>
+                <div>
+                    <button>
                         <i
-                            className={classNames(
-                                classes.icon,
-                                classes.iconUp,
-                                {
-                                    [classes.iconDown]: isExpanded,
-                                },
-                            )}
+                            // className={classNames(
+                            //     classes.icon,
+                            //     classes.iconUp,
+                            //     {
+                            //         [classes.iconDown]: isExpanded,
+                            //     },
+                            // )}
                             data-icon="plan:monthNavigation"
                         />
                     </button>
-                    <div className={classes.channel}>{value}</div>
+                    <div>{value}</div>
                     {isEditMode && (
                         <Button
                             icon="plan:addChannel"
                             type="primary"
                             onClick={this.openAddChannelPopup(row.category)}
-                            className={classes.buttonAdd}
+                            // className={classes.buttonAdd}
                         >
                             Add
                         </Button>
@@ -363,24 +377,24 @@ class Table extends React.PureComponent {
                 const { channel } = original;
 
                 return {
-                    className: classNames(classes.cellDefault, {
-                        [classes.cellCategoryWrapper]: groupedByPivot,
-                        [classes.cellCategoryEditable]: isEditMode,
-                    }),
+                    // className: classNames(classes.cellDefault, {
+                    //     [classes.cellCategoryWrapper]: groupedByPivot,
+                    //     [classes.cellCategoryEditable]: isEditMode,
+                    // }),
                     style: {
                         zIndex: channel === deletePopup && 2,
                     },
                 };
             },
             getHeaderProps: () => ({
-                className: classNames(
-                    classes.cellDefault,
-                    classes.cellHeader,
-                    classes.cellTitleOffset,
-                ),
+                // className: classNames(
+                //     classes.cellDefault,
+                //     classes.cellHeader,
+                //     classes.cellTitleOffset,
+                // ),
             }),
             getFooterProps: () => ({
-                className: classes.cellTitleOffset,
+                // className: classes.cellTitleOffset,
             }),
         });
 
@@ -389,18 +403,18 @@ class Table extends React.PureComponent {
 
     getTrProps = (_, rowInfo = {}) => {
         return {
-            className: classNames({
-                [classes.rowCategory]: rowInfo.aggregated,
-            }),
+            // className: classNames({
+            //     [classes.rowCategory]: rowInfo.aggregated,
+            // }),
         };
     };
 
     getTdProps = (_, rowInfo = {}, column = {}) => {
         return {
-            className: classNames({
-                [classes.cellAnnualCategory]:
-                    rowInfo.aggregated && column.isAnnual,
-            }),
+            // className: classNames({
+            //     [classes.cellAnnualCategory]:
+            //         rowInfo.aggregated && column.isAnnual,
+            // }),
         };
     };
 
@@ -423,12 +437,12 @@ class Table extends React.PureComponent {
 
         return (
             <ReactTableFixedColumns
-                className={
-                    classNames(
-                        classes.table,
-                        collapseStatus === COLLAPSE.ALL && classes.collapseAll
-                    )
-                }
+                // className={
+                //     classNames(
+                //         classes.table,
+                //         collapseStatus === COLLAPSE.ALL && classes.collapseAll
+                //     )
+                // }
                 columns={this.getTableColumns()}
                 data={this.getTableData()}
                 pageSize={currentPageSize}
@@ -465,4 +479,4 @@ Table.propTypes = {
     scrollPosition: PropTypes.number,
 };
 
-export default Table;
+export default enhance(Table);

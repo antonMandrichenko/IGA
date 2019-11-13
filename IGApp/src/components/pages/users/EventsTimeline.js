@@ -14,6 +14,15 @@ import {
   EXTERNAL_LEAD_SOURCE_DATA1,
   EXTERNAL_LEAD_SOURCE_DATA2
 } from 'components/utils/users';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 const defaultTooltip = {
   utm_source: 'Source',
@@ -33,7 +42,7 @@ const offlineTooltip = {
   external_lead_source_data1: EXTERNAL_LEAD_SOURCE_DATA1,
   external_lead_source_data2: EXTERNAL_LEAD_SOURCE_DATA2
 };
-export default class EventsTimeline extends Component {
+class EventsTimeline extends Component {
 
   style = style;
 
@@ -141,7 +150,7 @@ export default class EventsTimeline extends Component {
                         return (
                           <Tooltip className={this.classes.eventLine}
                                    key={`stage-${index}`}
-                                   tip={item.revenueForAccount ? `Deal amount - ${formatBudget(item.revenueForAccount)}` : null}
+                                   tip={item.revenueForAccount ? `Deal amount - ${formatBudget(item.revenueForAccount, false, this.props.attributionStore.currentCurrency.sign)}` : null}
                                    id={`stage-${index}`}>
                             <div className={this.classes.iconContainer}>
                               <div className={this.classes.iconCircle} data-icon="event:status"
@@ -163,7 +172,7 @@ export default class EventsTimeline extends Component {
                         return (
                           <Tooltip className={this.classes.eventLine}
                                    key={`stage-${index}`}
-                                   tip={`Deal amount - ${formatBudget(item.amount || 0)}`}
+                                   tip={`Deal amount - ${formatBudget(item.amount || 0, false, this.props.attributionStore.currentCurrency.sign)}`}
                                    id={`stage-${index}`}>
                             <div className={this.classes.iconContainer}>
                               <div className={this.classes.iconCircle} data-icon="event:status"
@@ -249,3 +258,5 @@ export default class EventsTimeline extends Component {
     );
   }
 }
+
+export default enhance(EventsTimeline);

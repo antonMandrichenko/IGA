@@ -17,8 +17,17 @@ import {getTeamMembersOptions} from 'components/utils/teamMembers';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import Tags from 'components/controls/Tags';
 import {isNil} from 'lodash';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class AddExpensePopup extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class AddExpensePopup extends Component {
 
   style = style;
   styles = [campaignPopupStyle];
@@ -223,7 +232,7 @@ export default class AddExpensePopup extends Component {
           <div className={this.classes.flexRow}>
             <div className={this.classes.leftHalf}>
               <Label>Total Amount</Label>
-              <Textfield value={formatBudget(amount)}
+              <Textfield value={formatBudget(amount, false, this.props.attributionStore.currentCurrency.sign)}
                          onChange={(e) => {
                            this.setState({amount: extractNumberFromBudget(e.target.value)});
                          }}/>
@@ -250,7 +259,7 @@ export default class AddExpensePopup extends Component {
                       }}
                       onChange={e => this.handleChangeTimeframe(e.value, index, 'month')}
                     />
-                    <Textfield value={formatBudget(timeframe[index] && timeframe[index].amount)}
+                    <Textfield value={formatBudget(timeframe[index] && timeframe[index].amount, false, this.props.attributionStore.currentCurrency.sign)}
                                placeHolder='$'
                                onChange={e => this.handleChangeTimeframe(extractNumberFromBudget(e.target.value), index, 'amount')}
                                style={{width: '90px', marginLeft: '20px'}}/>
@@ -322,3 +331,5 @@ export default class AddExpensePopup extends Component {
     </div>;
   }
 }
+
+export default enhance(AddExpensePopup);
