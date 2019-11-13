@@ -478,7 +478,7 @@ class AppComponent extends Component {
       attributionStore: {currentCurrency}
     } = this.props;
     const moneyIndicators = ["ARPA", "ARR", "CAC", "LTV", "MRR", "newBooking", "newPipeline"];
-    if(currentCurrency.currency !== 'USD') {
+    if(currentCurrency.rate !== 1) {
       const rate = currentCurrency.rate;
       data.annualBudget = data.annualBudget * rate;
       data.annualBudgetArray = data.annualBudgetArray.map(budget => budget * rate);
@@ -506,7 +506,30 @@ class AppComponent extends Component {
           ? {...item, budget: item.budget * rate}
           : item
         )
+
+      data.forecastedIndicators = data.forecastedIndicators.map(item => 
+        Object.entries(item).reduce((res, [key, value]) => 
+        moneyIndicators.includes(key) 
+        ? Object.assign(res, {[key]: {committed: value.committed * rate}}) 
+        : Object.assign(res,{[key]:value})
+        ,{})
+      )
+
+      data.actualIndicatorsDaily = data.actualIndicatorsDaily.map(item => Object.entries(item).reduce((res, [key, value]) =>  
+      moneyIndicators.includes(key) 
+          ? Object.assign(res, {[key]: value * rate}) 
+          : Object.assign(res,{[key]: value})
+      ,{}))
+
+      data.approvedBudgets = data.approvedBudgets.map(item => Object.entries(item).reduce((res, [key, value]) =>  
+        Object.assign(res, {[key]: value * rate}) 
+      ,{}))
+
+      data.expenses = data.expenses.map(item => item.amount && item.amount !== null ? {...item, amount: item.amount * rate} : item)
+
+      console.log("data.expenses", data.expenses)
     }
+    console.log("dataAfterTransform", data)
     
     return data;
   } 
