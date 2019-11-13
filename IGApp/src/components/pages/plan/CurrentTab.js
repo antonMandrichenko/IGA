@@ -9,8 +9,17 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import Paging from 'components/Paging';
 import {formatDate} from 'components/utils/date';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class CurrentTab extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class CurrentTab extends Component {
 
   style = style;
   styles = [planStyles, icons];
@@ -65,7 +74,7 @@ export default class CurrentTab extends Component {
           <div className={planStyles.locals.titleText}>
             {formattedDate}: Budget
           </div>
-          <div className={planStyles.locals.titlePrice}>{formatPrice(monthBudget)}</div>
+          <div className={planStyles.locals.titlePrice}>{formatPrice(monthBudget, this.props.attributionStore.currentCurrency.sign)}</div>
         </div>
         {/*
         <div className={planStyles.locals.titleButtons}>
@@ -115,3 +124,5 @@ export default class CurrentTab extends Component {
     </div>;
   }
 }
+
+export default enhance(CurrentTab);

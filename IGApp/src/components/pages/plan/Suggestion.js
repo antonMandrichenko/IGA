@@ -3,8 +3,17 @@ import Component from 'components/Component';
 import style from 'styles/plan/suggestion.css';
 import { getNickname } from 'components/utils/channels';
 import { formatNumber } from 'components/utils/budget';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class Suggestion extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class Suggestion extends Component {
 
   style = style;
 
@@ -49,11 +58,11 @@ export default class Suggestion extends Component {
           </div>
           <div className={this.classes.budgets}>
             <div className={this.classes.current}>
-              ${formatNumber(current)}
+              {this.props.attributionStore.currentCurrency.sign}{formatNumber(current)}
             </div>
             {" -> "}
             <div className={this.classes.suggested}>
-              ${formatNumber(suggested)}
+              {this.props.attributionStore.currentCurrency.sign}{formatNumber(suggested)}
             </div>
           </div>
           <div className={this.classes.actions}>
@@ -65,3 +74,5 @@ export default class Suggestion extends Component {
     </div>
   }
 }
+
+export default enhance(Suggestion);

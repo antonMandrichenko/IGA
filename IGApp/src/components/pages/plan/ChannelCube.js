@@ -12,8 +12,17 @@ import PlanPopup, {
 import style from 'styles/plan/current-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export function formatPrice(price) {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+export function formatPrice(price, sign) {
   price = String(Number.parseInt(price));
 
   let priceArr = price.split('').reverse();
@@ -24,12 +33,12 @@ export function formatPrice(price) {
     priceArr = priceArr.slice(3);
   }
 
-  return '$' + resultArr.reverse().slice(1).join('');
+  return sign + resultArr.reverse().slice(1).join('');
 }
 
 const popupWidth = 350;
 
-export default class ChannelCube extends Component {
+class ChannelCube extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
@@ -119,7 +128,7 @@ export default class ChannelCube extends Component {
         icon={data.icon}
         channel={data.channel}
         title={name}
-        price={formatPrice(price)}
+        price={formatPrice(price, this.props.attributionStore.currentCurrency.sign)}
         disabled={data.disabled}
         onInfoClick={(...args) => this.handleLeafOptionClick(...args, name, data)}
       >
@@ -149,7 +158,7 @@ export default class ChannelCube extends Component {
           icon={data.icon}
           channel={data.channel}
           title={name}
-          price={formatPrice(price)}
+          price={formatPrice(price, this.props.attributionStore.currentCurrency.sign)}
           onInfoClick={(...args) => this.handleLeafOptionClick(...args, name, data)}
         />
       );
@@ -172,7 +181,7 @@ export default class ChannelCube extends Component {
         className={this.classes.box}
         title={title}
         channel={data.channel}
-        price={formatPrice(price)}
+        price={formatPrice(price, this.props.attributionStore.currentCurrency.sign)}
         progress={progress}
         onInfoClick={this.handleBoxInfoClick}
       >
@@ -215,3 +224,5 @@ export default class ChannelCube extends Component {
     )
   }
 }
+
+export default enhance(ChannelCube);

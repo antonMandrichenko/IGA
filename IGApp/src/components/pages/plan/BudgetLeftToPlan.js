@@ -1,10 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Component from 'components/Component';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 import style from 'styles/plan/budget-left-to-plan.css';
 import {formatNumber} from 'components/utils/budget';
 
-export default class BudgetLeftToPlan extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class BudgetLeftToPlan extends Component {
 
   style = style;
 
@@ -29,16 +38,18 @@ export default class BudgetLeftToPlan extends Component {
           {formatNumber(annualBudget)}
         </div>
         <div className={this.classes.dollar}>
-          $
+          {this.props.attributionStore.currentCurrency.sign}
         </div>
       </div>
       <div className={this.classes.line}>
         <div className={this.classes.lineFill} style={{width: `${lineWidth}px`}}/>
       </div>
       <div className={this.classes.bottomText}>
-        ${formatNumber(annualBudgetLeftToPlan)} left to plan
+        {this.props.attributionStore.currentCurrency.sign}{formatNumber(annualBudgetLeftToPlan)} left to plan
       </div>
     </div>;
   }
 
 }
+
+export default enhance(BudgetLeftToPlan)

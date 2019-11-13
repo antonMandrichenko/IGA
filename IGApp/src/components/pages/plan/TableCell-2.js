@@ -238,9 +238,9 @@ class TableCell extends React.PureComponent {
     }
 
     renderInput() {
-        const { format, isEditMode } = this.props;
+        const { format, isEditMode, sign } = this.props;
         const { value } = this.state;
-        const formattedValue = format(value);
+        const formattedValue = format(value, false, sign);
         const onBlur = isEditMode ? this.onBlur : undefined;
 
         if (this.isEditMode()) {
@@ -266,8 +266,8 @@ class TableCell extends React.PureComponent {
     }
 
     render() {
-        const { format, secondaryValue } = this.props;
-        const formattedSecondaryValue = format(secondaryValue);
+        const { format, secondaryValue, sign } = this.props;
+        const formattedSecondaryValue = format(secondaryValue, false, sign);
 
         return (
             <form

@@ -12,8 +12,17 @@ import {formatDate} from 'components/utils/date';
 import Loading from 'components/pages/plan/Loading';
 import cloneDeepWith from 'lodash/cloneDeepWith';
 import merge from 'lodash/merge';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class TopSuggestions extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class TopSuggestions extends Component {
 
   style = style;
   styles = [suggestionStyle];
@@ -144,11 +153,11 @@ export default class TopSuggestions extends Component {
               </div>
               <div className={suggestionStyle.locals.budgets} style={{fontSize: '16px'}}>
                 <div className={suggestionStyle.locals.current}>
-                  ${item && formatNumber(item.current)}
+                  {this.props.attributionStore.currentCurrency.sign}{item && formatNumber(item.current)}
                 </div>
                 {' -> '}
                 <div className={suggestionStyle.locals.suggested}>
-                  ${item && formatNumber(item.suggested)}
+                  {this.props.attributionStore.currentCurrency.sign}{item && formatNumber(item.suggested)}
                 </div>
               </div>
               <div className={this.classes.forecastHeadline}>
@@ -205,3 +214,5 @@ export default class TopSuggestions extends Component {
   }
 
 }
+
+export default enhance(TopSuggestions);
