@@ -15,8 +15,17 @@ import Toggle from 'components/controls/Toggle';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import {getTeamMembersOptions} from 'components/utils/teamMembers';
 import {getNickname} from 'components/utils/indicators';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class Brief extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class Brief extends Component {
 
   style = style;
   styles = [campaignPopupStyle, buttonsStyle];
@@ -350,7 +359,7 @@ export default class Brief extends Component {
           <div className={this.classes.colLeft}>
             <Label>{this.props.campaign.isOneTime ? 'Budget' : 'Monthly Budget'}</Label>
             <Textfield
-              value={'$' + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+              value={`${this.props.attributionStore.currentCurrency.sign}` + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
               onChange={this.handleChangeBudget.bind(this, 'budget')} style={{
               width: '166px'
             }}/>
@@ -358,7 +367,7 @@ export default class Brief extends Component {
           <div className={this.classes.colCenter}>
             <Label>Actual Spent</Label>
             <Textfield
-              value={'$' + (this.props.campaign.actualSpent ? this.props.campaign.actualSpent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+              value={`${this.props.attributionStore.currentCurrency.sign}` + (this.props.campaign.actualSpent ? this.props.campaign.actualSpent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
               onChange={this.handleChangeBudget.bind(this, 'actualSpent')} style={{
               width: '166px'
             }}/>
@@ -526,3 +535,5 @@ export default class Brief extends Component {
     </div>;
   }
 }
+
+export default enhance(Brief);

@@ -6,8 +6,17 @@ import style from 'styles/plan/annual-tab.css';
 import icons from 'styles/icons/plan.css';
 import { timeFrameToDate } from 'components/utils/objective';
 import { formatDate } from 'components/utils/date';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class AnalyzeTable extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class AnalyzeTable extends Component {
 
   style = style;
   styles = [icons];
@@ -102,7 +111,7 @@ export default class AnalyzeTable extends Component {
         let key = parent + ':' + item + '-' + i;
         let collapsed = !!this.state.collapsed[key];
         const params = data[item];
-        const values = params.approvedValues.slice(this.props.months || (params.approvedValues.length - 1)).map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        const values = params.approvedValues.slice(this.props.months || (params.approvedValues.length - 1)).map(val => `${this.props.attributionStore.currentCurrency.sign}` + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
         const  titleElem = <div
           style={{
             marginLeft: (level | 0) * 17 + 'px'
@@ -175,7 +184,7 @@ export default class AnalyzeTable extends Component {
 
     const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
       { 'TOTAL' }
-    </div>, data['__TOTAL__'].approvedValues.slice(this.props.months || (data['__TOTAL__'].approvedValues.length - 1)).map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
+    </div>, data['__TOTAL__'].approvedValues.slice(this.props.months || (data['__TOTAL__'].approvedValues.length - 1)).map(val => `${this.props.attributionStore.currentCurrency.sign}` + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
       className: this.classes.footRow
     });
 
@@ -254,3 +263,5 @@ export default class AnalyzeTable extends Component {
     return elem;
   }
 }
+
+export default enhance(AnalyzeTable);

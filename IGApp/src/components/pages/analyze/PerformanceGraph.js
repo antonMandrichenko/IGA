@@ -22,6 +22,15 @@ import {getColor} from 'components/utils/colors';
 import { formatCustomDate } from 'components/utils/date';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import style from 'styles/analyze/performance-graph.css';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 const fillGapsWithZeros = memoize((data) => {
   const zeroData = Object.keys(getIndicatorsWithProps())
@@ -31,7 +40,7 @@ const fillGapsWithZeros = memoize((data) => {
   return data.map((item) => ({ ...zeroData, ...item }))
 })
 
-export default class PerformanceGraph extends Component {
+class PerformanceGraph extends Component {
 
   style = style;
 
@@ -210,7 +219,7 @@ export default class PerformanceGraph extends Component {
                       backgroundColor: getColor(index)
                     }}
                   />
-                  {setValueText(channel, '$0', '$')}
+                  {setValueText(channel, '$0', `${this.props.attributionStore.currentCurrency.sign}`)}
                   <div className={this.classes.chartTooltipChannelText}>
                     {this.getChannelLabel(channel, 'total spent')}
                   </div>
@@ -347,7 +356,7 @@ export default class PerformanceGraph extends Component {
                 tick={{fontSize: '12px', color: '#707ea7'}}
                 tickLine={false}
                 tickMargin={15}
-                tickFormatter={v => '$' + formatBudgetShortened(v)}
+                tickFormatter={v => `${this.props.attributionStore.currentCurrency.sign}` + formatBudgetShortened(v)}
               />
               <YAxis
                 yAxisId='right'
@@ -407,3 +416,5 @@ export default class PerformanceGraph extends Component {
     );
   }
 }
+
+export default enhance(PerformanceGraph);

@@ -7,8 +7,17 @@ import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import Avatar from 'components/Avatar';
 import Table from 'components/controls/Table';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class OnlineCampaigns extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class OnlineCampaigns extends Component {
 
   style = style;
 
@@ -135,7 +144,7 @@ export default class OnlineCampaigns extends Component {
           {
             id: 'actualSpent',
             header: 'Ad Spend',
-            cell: ({actualSpent}) => '$' + formatNumber(actualSpent || 0),
+            cell: ({actualSpent}) => `${this.props.attributionStore.currentCurrency.sign}` + formatNumber(actualSpent || 0),
             sortable: true,
             sortMethod: (a, b) => a.actualSpent - b.actualSpent,
             minWidth: 80
@@ -184,3 +193,5 @@ export default class OnlineCampaigns extends Component {
     );
   }
 }
+
+export default enhance(OnlineCampaigns);

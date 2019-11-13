@@ -3,8 +3,17 @@ import Component from 'components/Component';
 import style from 'styles/campaigns/task.css';
 import { formatNumber } from 'components/utils/budget';
 import CampaignTask from 'components/pages/campaigns/CampaignTask';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class Task extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class Task extends Component {
 
   style = style;
 
@@ -50,7 +59,7 @@ export default class Task extends Component {
             <div className={ this.classes.content } onClick={ this.toggleDescription }/>
             : null }
           <div className={ this.classes.budget }>
-            {this.props.budget ? '$' + formatNumber(this.props.budget)  : '' }
+            {this.props.budget ? `${this.props.attributionStore.currentCurrency.sign}` + formatNumber(this.props.budget)  : '' }
           </div>
           <div className={ this.classes.dueDate }>
             { this.props.dueDate ? '(' + this.getNumberOfDaysLeft() + ')' : '' }
@@ -79,3 +88,5 @@ export default class Task extends Component {
   }
 
 }
+
+export default enhance(Task);

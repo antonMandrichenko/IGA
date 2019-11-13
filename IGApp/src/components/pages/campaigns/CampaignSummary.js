@@ -5,8 +5,17 @@ import Label from 'components/ControlsLabel';
 
 import style from 'styles/campaigns/campaign-summary.css';
 import icons from 'styles/icons/plan.css';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class CampaignSummary extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class CampaignSummary extends Component {
 
   style = style;
   styles = [icons];
@@ -34,7 +43,7 @@ export default class CampaignSummary extends Component {
         <div className={ this.classes.row } style={{ color: '#2CF212' }}>
           <div className={ this.classes.cols }>
             <div className={ this.classes.colLeft }>
-              { budget ? '$' + budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '$0' }
+              { budget ? `${this.props.attributionStore.currentCurrency.sign}` + budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : `${this.props.attributionStore.currentCurrency.sign}0` }
             </div>
             <div className={ this.classes.colRight }>
               <div className={ this.classes.circle }>
@@ -87,3 +96,5 @@ export default class CampaignSummary extends Component {
   }
 
 }
+
+export default enhance(CampaignSummary);
