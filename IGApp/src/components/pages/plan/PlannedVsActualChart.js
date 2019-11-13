@@ -25,8 +25,17 @@ import {
   getNickname as getIndicatorNickname
 } from 'components/utils/indicators';
 import style from 'styles/plan/planned-vs-actual-chart.css';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class PlannedVsActualChart extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class PlannedVsActualChart extends Component {
 
   style = style;
 
@@ -213,7 +222,7 @@ export default class PlannedVsActualChart extends Component {
             {COLUMNS[activeColumn].label}
           </div>
           <div className={this.classes.chartTooltipIndicatorValue}>
-            {activeIndicator === 'spending' ? formatBudget(value, true).replace('+', '') : value}
+            {activeIndicator === 'spending' ? formatBudget(value, true, this.props.attributionStore.currentCurrency.sign).replace('+', '') : value}
           </div>
         </div>
       );
@@ -339,3 +348,5 @@ export default class PlannedVsActualChart extends Component {
     );
   }
 }
+
+export default enhance(PlannedVsActualChart);
