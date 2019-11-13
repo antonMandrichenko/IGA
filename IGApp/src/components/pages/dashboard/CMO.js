@@ -960,7 +960,7 @@ class CMO extends Component {
                     <div className={this.classes.fatherChannelValue}>
                     {this.props.attributionStore.currentCurrency.sign}{formatNumber(element.value)}
                     </div>
-                    <div className={this.classes.fatherChannelPercentage}>
+                    <div className={this.classes.fatherChannelPercentage} style={{marginLeft: "120px"}}>
                       ({Math.round(element.value / monthlyBudget * 100)}%)
                     </div>
                   </div>
