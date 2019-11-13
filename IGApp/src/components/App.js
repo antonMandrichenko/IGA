@@ -527,7 +527,10 @@ class AppComponent extends Component {
 
       data.expenses = data.expenses.map(item => item.amount && item.amount !== null ? {...item, amount: item.amount * rate} : item)
 
-      console.log("data.expenses", data.expenses)
+      data.projectedPlan = data.projectedPlan.map(item => ({...item, plannedChannelBudgets: Object.entries(item.plannedChannelBudgets).reduce((res, [key, value]) =>  
+        Object.assign(res, {[key]: value * rate}) 
+      ,{})}))
+      console.log("data.projectedPlan", data.projectedPlan)
     }
     console.log("dataAfterTransform", data)
     
