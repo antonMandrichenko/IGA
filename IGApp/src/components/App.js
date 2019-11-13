@@ -561,9 +561,7 @@ class AppComponent extends Component {
           objectives: historyObjectives,
           planBudgets: historyPlanBudgets
         }
-      console.log("data.historyData.planBudgets", data.historyData.planBudgets)
     }
-    console.log("dataAfterTransform", data)
     
     return data;
   } 

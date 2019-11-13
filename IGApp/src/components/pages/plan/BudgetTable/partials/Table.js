@@ -145,10 +145,6 @@ class Table extends React.PureComponent {
 
             return row;
         });
-        // console.log("getData",orderBy(notSorted, [
-        //     row => row.category.toLowerCase(),
-        //     'nickname',
-        // ]))
         return orderBy(notSorted, [
             row => row.category.toLowerCase(),
             'nickname',
