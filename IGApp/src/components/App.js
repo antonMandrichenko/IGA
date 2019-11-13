@@ -530,7 +530,28 @@ class AppComponent extends Component {
       data.projectedPlan = data.projectedPlan.map(item => ({...item, plannedChannelBudgets: Object.entries(item.plannedChannelBudgets).reduce((res, [key, value]) =>  
         Object.assign(res, {[key]: value * rate}) 
       ,{})}))
-      console.log("data.projectedPlan", data.projectedPlan)
+
+      data.pricingTiers = data.pricingTiers.map(item =>({...item, price: item.price * rate}))
+
+      data.userMinMonthBudgets = data.userMinMonthBudgets.map(item => ({PR_publicity_pressReleases: item.PR_publicity_pressReleases * rate}))
+      
+      const historyIndicators =  data.historyData.indicators.map(item => Object.entries(item).reduce((res, [key, value]) =>  
+      moneyIndicators.includes(key) 
+          ? Object.assign(res, {[key]: value * rate}) 
+          : Object.assign(res,{[key]: value})
+      ,{}))
+
+      const historyObjectives =  data.historyData.objectives.map(item => 
+        Object.entries(item).reduce((res, [key, value]) =>  
+          key
+            ? moneyIndicators.includes(key) 
+              ? Object.assign(res, {[key]: {...value, target: {...value.target, value: value.target.value * rate}}}) 
+              : Object.assign(res,{[key]:{...value}})
+            : res
+        ,{}))
+
+        data.historyData = {...data.historyData, indicators: historyIndicators, objectives: historyObjectives}
+      console.log("data.historyData.objectives", data.historyData.objectives)
     }
     console.log("dataAfterTransform", data)
     
@@ -539,6 +560,7 @@ class AppComponent extends Component {
 
   changeDataFromCurrency = () => {
     const {attributionStore} = this.props;
+    console.log("userMonthPlanInDollars.historyData", userMonthPlanInDollars.historyData)
     this.setDataAsState({...userMonthPlanInDollars});
     attributionStore.setAttributionData(userStore.userMonthPlan, {monthsExceptThisMonth: 0}, "default")
   }
