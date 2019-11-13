@@ -550,8 +550,18 @@ class AppComponent extends Component {
             : res
         ,{}))
 
-        data.historyData = {...data.historyData, indicators: historyIndicators, objectives: historyObjectives}
-      console.log("data.historyData.objectives", data.historyData.objectives)
+        const historyPlanBudgets = data.historyData.planBudgets.map(item => 
+          Object.entries(item).reduce((res, [key, value]) => 
+            Object.assign(res, {[key]: {...value, committedBudget: value.committedBudget * rate}}), {})
+          )
+
+        data.historyData = {
+          ...data.historyData, 
+          indicators: historyIndicators, 
+          objectives: historyObjectives,
+          planBudgets: historyPlanBudgets
+        }
+      console.log("data.historyData.planBudgets", data.historyData.planBudgets)
     }
     console.log("dataAfterTransform", data)
     
