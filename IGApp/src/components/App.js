@@ -208,7 +208,6 @@ class AppComponent extends Component {
       })
       .then((data) => {
         if (data) {
-          console.log("data2", data)
           if(!userMonthPlanInDollars) {
             userMonthPlanInDollars = {...data}
           }
@@ -240,7 +239,6 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (data) {
-                console.log("userData", data)
                 userStore.setUserAccount(data);
                 this.setState({
                   userAccount: data,
@@ -452,7 +450,6 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (data) {
-                console.log("region", data)
                 this.setState({
                   regions: data
                 });
@@ -568,7 +565,6 @@ class AppComponent extends Component {
 
   changeDataFromCurrency = () => {
     const {attributionStore} = this.props;
-    console.log("userMonthPlanInDollars.historyData", userMonthPlanInDollars.historyData)
     this.setDataAsState({...userMonthPlanInDollars});
     attributionStore.setAttributionData(userStore.userMonthPlan, {monthsExceptThisMonth: 0}, "default")
   }
@@ -844,7 +840,6 @@ class AppComponent extends Component {
         if (response.ok) {
           response.json()
             .then(([unmappedUrls, unmappedUtms, unmappedOffline]) => {
-              console.log("unmap", unmappedUrls, unmappedUtms, unmappedOffline)
               this.setState({
                 unmappedUrls,
                 unmappedUtms,
