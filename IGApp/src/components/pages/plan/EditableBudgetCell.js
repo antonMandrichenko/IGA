@@ -3,8 +3,17 @@ import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import {extractNumber} from 'components/utils/utils';
 import style from 'styles/plan/editable-budget-cell.css';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
 
-export default class EditableBudgetCell extends Component {
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
+
+class EditableBudgetCell extends Component {
 
   style = style;
   
@@ -82,7 +91,7 @@ export default class EditableBudgetCell extends Component {
   }
 
   render() {
-    const {formatter, disabled} = this.props;
+    const {formatter, disabled, attributionStore} = this.props;
     const {value, isEditing} = this.state;
 
     return (
@@ -93,7 +102,7 @@ export default class EditableBudgetCell extends Component {
             <Fragment>
               <input
                 ref={el => this.input = el}
-                value={formatter(value)}
+                value={formatter(value, false, attributionStore.currentCurrency.sign)}
                 onChange={this.onChange}
                 className={this.classes.input}
               />
@@ -111,7 +120,7 @@ export default class EditableBudgetCell extends Component {
           )
           : (
             <Fragment>
-              {formatter(value)}
+              {formatter(value, false, attributionStore.currentCurrency.sign)}
               <button
                 type='button'
                 disabled={disabled}
@@ -125,3 +134,5 @@ export default class EditableBudgetCell extends Component {
     )
   }
 }
+
+export default enhance(EditableBudgetCell);

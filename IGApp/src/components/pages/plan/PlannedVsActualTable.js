@@ -26,6 +26,15 @@ import {
 } from 'components/utils/budget';
 import style from 'styles/plan/planned-vs-actual-table.css';
 import reactTableStyle from 'react-table/react-table.css';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 const ReactTableFixedColumns = withFixedColumns(ReactTable);
 
@@ -365,8 +374,8 @@ class PlannedVsActualTable extends Component {
                       planned budget
                     </button>
                   ),
-                  Footer: formatBudget(sumBy(pivotRows, item => item[indicator].planned)),
-                  Cell: ({value}) => formatBudget(value)
+                  Footer: formatBudget(sumBy(pivotRows, item => item[indicator].planned), false, this.props.attributionStore.currentCurrency.sign),
+                  Cell: ({value}) => formatBudget(value, false, this.props.attributionStore.currentCurrency.sign)
                 };
                 break;
               case COLUMNS.actual.value:
@@ -374,9 +383,9 @@ class PlannedVsActualTable extends Component {
                   id: 'spendingActual',
                   accessor: item => item,
                   Header: 'actual cost',
-                  Footer: formatBudget(sumBy(pivotRows, item => item[indicator].actual)),
+                  Footer: formatBudget(sumBy(pivotRows, item => item[indicator].actual), false, this.props.attributionStore.currentCurrency.sign),
                   Cell: ({value}) => (value.isPivotRow
-                      ? formatBudget(value[indicator].actual)
+                      ? formatBudget(value[indicator].actual, false, this.props.attributionStore.currentCurrency.sign)
                       : (
                         <EditableBudgetCell
                           value={value[indicator].actual}
@@ -395,9 +404,10 @@ class PlannedVsActualTable extends Component {
                   Header: 'plan vs actual',
                   Footer: formatBudget(
                     sumBy(pivotRows, item => item[indicator].actual - item[indicator].planned),
-                    true
+                    true,
+                    this.props.attributionStore.currentCurrency.sign
                   ),
-                  Cell: ({value}) => formatBudget(value[indicator].actual - value[indicator].planned, true)
+                  Cell: ({value}) => formatBudget(value[indicator].actual - value[indicator].planned, true, this.props.attributionStore.currentCurrency.sign)
                 };
                 break;
               case COLUMNS.pacingFor.value:
@@ -413,9 +423,9 @@ class PlannedVsActualTable extends Component {
                     const sumPacing = sumBy(pivotRows, value => isCurrentMonth ? value[indicator].isActualEmpty ? value[indicator].actual : extrapolateValue(value[indicator].actual) : 0);
                     const diff = sumPacing !== 0 ? sumPacing - sumPlanned : 0;
 
-                    return diff === 0 ? formatBudget(sumPacing) : (
+                    return diff === 0 ? formatBudget(sumPacing, false, this.props.attributionStore.currentCurrency.sign) : (
                       <div style={{display: 'flex'}}>
-                        {formatBudget(sumPacing)}
+                        {formatBudget(sumPacing, false, this.props.attributionStore.currentCurrency.sign)}
                         <div style={{marginLeft: 10}}>
                           <NumberWithArrow
                             stat={formatNumber(diff, true) > 0 ? `+${formatNumber(diff, true)}` : formatNumber(diff, true)}
@@ -434,9 +444,9 @@ class PlannedVsActualTable extends Component {
                     const pacing = value[indicator].isActualEmpty ? value[indicator].actual : extrapolateValue(value[indicator].actual);
                     const diff = pacing !== 0 ? pacing - value[indicator].planned : 0;
 
-                    return diff === 0 ? formatBudget(pacing) : (
+                    return diff === 0 ? formatBudget(pacing, false, this.props.attributionStore.currentCurrency.sign) : (
                       <div style={{display: 'flex'}}>
-                        {formatBudget(pacing)}
+                        {formatBudget(pacing, false, this.props.attributionStore.currentCurrency.sign)}
                         <div style={{marginLeft: 10}}>
                           <NumberWithArrow
                             stat={formatNumber(diff, true) > 0 ? `+${formatNumber(diff, true)}` : formatNumber(diff, true)}
@@ -532,7 +542,7 @@ class PlannedVsActualTable extends Component {
 
                     return diff === 0 ? extrapolateValue(pacing) : (
                       <div style={{display: 'flex'}}>
-                        {formatBudget(pacing)}
+                        {formatBudget(pacing. false, this.props.attributionStore.currentCurrency.sign)}
                         <div style={{marginLeft: 10}}>
                           <NumberWithArrow
                             stat={formatNumber(diff, true) > 0 ? `+${formatNumber(diff, true)}` : formatNumber(diff, true)}
@@ -553,7 +563,7 @@ class PlannedVsActualTable extends Component {
 
                     return diff === 0 ? extrapolateValue(pacing) : (
                       <div style={{display: 'flex'}}>
-                        {formatBudget(pacing)}
+                        {formatBudget(pacing, false, this.props.attributionStore.currentCurrency.sign)}
                         <div style={{marginLeft: 10}}>
                           <NumberWithArrow
                             stat={formatNumber(diff, true) > 0 ? `+${formatNumber(diff, true)}` : formatNumber(diff, true)}
@@ -683,4 +693,4 @@ class PlannedVsActualTable extends Component {
   }
 }
 
-export default PlannedVsActualTable;
+export default enhance(PlannedVsActualTable);

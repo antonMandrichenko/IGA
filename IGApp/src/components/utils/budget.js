@@ -10,7 +10,7 @@ export function formatNumber(budget) {
   return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export function formatBudget(budget, withSign = false) {
+export function formatBudget(budget, withSign = false, currSign) {
   if (isNil(budget)) {
     return '';
   }
@@ -21,7 +21,7 @@ export function formatBudget(budget, withSign = false) {
     sign = (budget > 0) ? '+' : (budget < 0 ? '-' : '');
 
   }
-  return `${sign}$${formatNumber(Math.abs(Math.round(budget)))}`;
+  return `${sign}${currSign ? currSign : "$"}${formatNumber(Math.abs(Math.round(budget)))}`;
 }
 
 export function formatBudgetShortened(budget) {
