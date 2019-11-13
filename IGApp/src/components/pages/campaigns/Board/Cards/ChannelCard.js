@@ -7,6 +7,15 @@ import { formatNumber } from 'components/utils/budget';
 import { DraggableCampaignCard } from './DraggableCard'
 
 import style from 'styles/campaigns/card.css';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 class Card extends Component {
   style = style;
@@ -70,8 +79,8 @@ class Card extends Component {
         <div className={this.classes.card} onClick={this.handleClick}>
           <div className={this.classes.cardName}>{item.title}</div>
           <div className={this.classes.cardFooter}>
-            <span className={this.classes.cardBudget}>${formatNumber(item.campaignsBudget || 0)}</span>
-            <span className={this.classes.budget}>{" / $" + formatNumber(item.budget)}</span>
+            <span className={this.classes.cardBudget}>{this.props.attributionStore.currentCurrency.sign}{formatNumber(item.campaignsBudget || 0)}</span>
+            <span className={this.classes.budget}>{` / ${this.props.attributionStore.currentCurrency.sign}` + formatNumber(item.budget)}</span>
             <div className={this.classes.campaignsCount}>{item.campaigns.length}</div>
             <div className={ this.classes.cardIcon } data-icon={item.icon} />
           </div>
@@ -90,4 +99,4 @@ class Card extends Component {
   }
 }
 
-export default Card
+export default enhance(Card);

@@ -15,6 +15,15 @@ import {formatNumber} from 'components/utils/budget';
 import {getProfileSync} from 'components/utils/AuthService';
 import Expenses from 'components/pages/campaigns/Expenses';
 import history from 'history';
+import {compose} from 'components/utils/utils';
+import {inject, observer} from 'mobx-react';
+
+const enhance = compose(
+  inject(({attributionStore}) => ({
+    attributionStore
+  })),
+  observer
+);
 
 function getDateString(stringDate) {
   if (stringDate) {
@@ -33,7 +42,7 @@ function getDateString(stringDate) {
   return null;
 }
 
-export default class Campaigns extends Component {
+class Campaigns extends Component {
 
   style = style;
   styles = [campaignsStyle];
@@ -282,10 +291,10 @@ export default class Campaigns extends Component {
                     className={campaignsStyle.locals.campaignsTitleArrow}
                     style={{color: monthlyBudgetLeftToInvest >= 0 ? '#2ecc71' : '#ce352d'}}
                   >
-                    ${monthlyBudgetLeftToInvest ? formatNumber(monthlyBudgetLeftToInvest) : 0}
+                    {this.props.attributionStore.currentCurrency.sign}{monthlyBudgetLeftToInvest ? formatNumber(monthlyBudgetLeftToInvest) : 0}
                   </div>
                   <div>
-                    {' / $' + formatNumber(monthlyBudget)}
+                    {` / ${this.props.attributionStore.currentCurrency.sign}` + formatNumber(monthlyBudget)}
                   </div>
                 </div>
               </div>
@@ -340,3 +349,5 @@ export default class Campaigns extends Component {
     </div>;
   }
 }
+
+export default enhance(Campaigns);
